@@ -12,7 +12,7 @@ import { MessagingService } from './messaging.service';
         options: {
           client: {
             clientId: 'payments',
-            brokers: ['localhost:29092'],
+            brokers: [process.env.CLOUDKARAFKA_BROKERS],
           },
           consumer: {
             groupId: 'payments-consumer',
