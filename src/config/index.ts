@@ -16,11 +16,11 @@ interface iConfig {
 export default (): Partial<iConfig> => ({
   port: parseInt(process.env.PORT, 10) || 3000,
   brokers: {
-    host: process.env.CLOUDKARAFKA_BROKERS.replace(/\\n/gm, '\n'),
-    authMechanism: process.env.CLOUDKARAFKA_AUTH_MECHANISM.replace(/\\n/gm, '\n'),
-    topicPrefix: process.env.CLOUDKARAFKA_TOPIC_PREFIX.replace(/\\n/gm, '\n'),
-    username: process.env.CLOUDKARAFKA_USERNAME.replace(/\\n/gm, '\n'),
-    password: process.env.CLOUDKARAFKA_PASSWORD.replace(/\\n/gm, '\n'),
+    host: process.env.CLOUDKARAFKA_BROKERS,
+    authMechanism: process.env.CLOUDKARAFKA_AUTH_MECHANISM,
+    topicPrefix: process.env.CLOUDKARAFKA_TOPIC_PREFIX,
+    username: process.env.CLOUDKARAFKA_USERNAME,
+    password: process.env.CLOUDKARAFKA_PASSWORD,
   },
   database: dbConfig(),
 });
