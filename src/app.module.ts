@@ -2,16 +2,15 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ScheduleModule } from '@nestjs/schedule';
-import { TasksModule } from './tasks/tasks.module';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config';
-import { AccountModule } from './accounts/account.module';
-import { TransactionModule } from './transactions/transaction.module';
-import { KycModule } from './identities/kyc.module';
 import { HealthModule } from './health/health.module';
+import { PaymntsModule } from './paymnts/paymnts.module';
+import { MessagingModule } from './messaging/messaging.module';
+import { MomoService } from './momo-service/momo-service.service';
+import { BankService } from './bank-service/bank-service.service';
+import { WalletService } from './wallet-service/wallet-service.service';
 
 @Module({
   imports: [
@@ -24,17 +23,12 @@ import { HealthModule } from './health/health.module';
       useFactory: (configService: ConfigService) => configService.get('database'),
       inject: [ConfigService],
     }),
-    HealthModule,
+    MessagingModule,
     ScheduleModule.forRoot(),
-    AuthModule,
-    UsersModule,
-    TasksModule,
-    AccountModule,
-    TransactionModule,
-    KycModule,
     HealthModule,
+    PaymntsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, MomoService, BankService, WalletService],
 })
 export class AppModule {}
