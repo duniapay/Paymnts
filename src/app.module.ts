@@ -17,6 +17,7 @@ import { WalletService } from './wallet-service/wallet-service.service';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
+      cache: true,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

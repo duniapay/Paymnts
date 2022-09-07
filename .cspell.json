@@ -13,12 +13,14 @@
   "words": [
     "additionnal",
     "CASHIN",
+    "CLOUDKARAFKA",
     "destinataire",
     "Intouch",
     "microservices",
     "Momo",
     "PAYMNTS",
-    "Reponse"
+    "Reponse",
+    "sasl"
   ],
   "version": "0.2"
 }

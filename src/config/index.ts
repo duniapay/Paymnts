@@ -4,17 +4,23 @@ import { dbConfig } from './database';
 interface iConfig {
   port: number;
   database: PostgresConnectionOptions;
-  keys: {
-    privateKey: string;
-    publicKey: string;
+  brokers: {
+    host: string;
+    authMechanism: string;
+    topicPrefix: string;
+    username: string;
+    password: string;
   };
 }
 
 export default (): Partial<iConfig> => ({
   port: parseInt(process.env.PORT, 10) || 3000,
-  keys: {
-    privateKey: process.env.PRIVATE_KEY.replace(/\\n/gm, '\n'),
-    publicKey: process.env.PUBLIC_KEY.replace(/\\n/gm, '\n'),
+  brokers: {
+    host: process.env.CLOUDKARAFKA_BROKERS.replace(/\\n/gm, '\n'),
+    authMechanism: process.env.CLOUDKARAFKA_AUTH_MECHANISM.replace(/\\n/gm, '\n'),
+    topicPrefix: process.env.CLOUDKARAFKA_TOPIC_PREFIX.replace(/\\n/gm, '\n'),
+    username: process.env.CLOUDKARAFKA_USERNAME.replace(/\\n/gm, '\n'),
+    password: process.env.CLOUDKARAFKA_PASSWORD.replace(/\\n/gm, '\n'),
   },
   database: dbConfig(),
 });
