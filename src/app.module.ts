@@ -6,11 +6,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config';
 import { HealthModule } from './health/health.module';
-import { PaymntsModule } from './paymnts/paymnts.module';
-import { MessagingModule } from './messaging/messaging.module';
-import { MomoService } from './momo-service/momo-service.service';
-import { BankService } from './bank-service/bank-service.service';
-import { WalletService } from './wallet-service/wallet-service.service';
+import { BankModule } from './bank/bank.module';
+import { MobileMoneyModule } from './mobile-money/mobile-money.module';
+import { BankService } from './bank/bank.service';
+import { MomoService } from './mobile-money/mobile-money.service';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { IdentityModule } from './identity/identity.module';
 
 @Module({
   imports: [
@@ -24,12 +26,15 @@ import { WalletService } from './wallet-service/wallet-service.service';
       useFactory: (configService: ConfigService) => configService.get('database'),
       inject: [ConfigService],
     }),
-    MessagingModule,
     ScheduleModule.forRoot(),
     HealthModule,
-    PaymntsModule,
+    AuthModule,
+    UsersModule,
+    BankModule,
+    MobileMoneyModule,
+    IdentityModule,
   ],
   controllers: [AppController],
-  providers: [AppService, MomoService, BankService, WalletService],
+  providers: [AppService, MomoService, BankService],
 })
 export class AppModule {}
