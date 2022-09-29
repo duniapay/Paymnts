@@ -8,6 +8,9 @@ import { promises } from 'fs';
 import { LoggerService } from './logger/logger.service';
 import { LoggingInterceptor } from './domain/interceptors/logging.interceptors';
 import * as basicAuth from 'express-basic-auth';
+import { IdentityModule } from './identity/identity.module';
+import { BankModule } from './bank/bank.module';
+import { MobileMoneyModule } from './mobile-money/mobile-money.module';
 
 const SWAGGER_ENVS = ['local', 'dev', 'staging'];
 
@@ -51,7 +54,9 @@ async function bootstrap() {
     )
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, config, {
+    include: [BankModule, MobileMoneyModule, IdentityModule],
+  });
   SwaggerModule.setup('docs', app, document);
 
   // TODO: Fix Logger

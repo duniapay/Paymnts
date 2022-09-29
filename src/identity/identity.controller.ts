@@ -7,7 +7,7 @@ import { JwtAuthGuard } from '../auth/strategy/jwt-auth.guard';
 import { UsersService } from '../users/users.service';
 
 @Controller('kyc')
-@ApiTags('kyc')
+@ApiTags('KYC')
 // @ApiBearerAuth('jwt') // This is the one that needs to match the name in main.ts
 // @UseGuards(JwtAuthGuard)
 export class IdentityController {
