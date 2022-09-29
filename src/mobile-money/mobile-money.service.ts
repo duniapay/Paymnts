@@ -15,6 +15,7 @@ import { encrypt, decrypt } from '../domain/utils/hash.utils';
 import { MobileMoneyTransactionEntity } from './entities/mobile-money.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class MomoService {
@@ -195,7 +196,7 @@ export class MomoService {
       return Promise.resolve({
         status: 'Success',
         service_id: 'service-id',
-        gu_transaction_id: '',
+        gu_transaction_id: uuidv4(),
         recipient_phone_number: body.receiver_phone_number,
         amount: body.amount,
         partner_transaction_id: body.reference,
