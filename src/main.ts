@@ -36,7 +36,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Cowrie')
     .setVersion(pkg.version)
-    .setDescription('Multi Channels Payment API')
+    .setDescription('Payments API')
     .setVersion('1.0')
     .addBearerAuth(
       {
@@ -49,6 +49,7 @@ async function bootstrap() {
       },
       'jwt', // This name here is important for matching up with @ApiBearerAuth() in your controller!
     )
+    .addServer('https://api-staging.dunia.africa')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
