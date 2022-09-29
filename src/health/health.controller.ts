@@ -1,9 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { HealthCheckService, HttpHealthIndicator, HealthCheck, TypeOrmHealthIndicator, MemoryHealthIndicator } from '@nestjs/terminus';
 
 @Controller('health')
-@ApiTags('health')
 export class HealthController {
   constructor(
     private memory: MemoryHealthIndicator,

@@ -6,7 +6,7 @@ import { BankTransferDTO } from './dto/create-bank.dto';
 import { UpdateBankTransferDto } from './dto/update-bank.dto';
 
 @Controller('bank')
-@ApiTags('bank')
+@ApiTags('Bank')
 @UseGuards(JwtAuthGuard)
 export class BankController {
   constructor(

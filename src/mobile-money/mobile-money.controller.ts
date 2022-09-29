@@ -1,15 +1,13 @@
 import { Controller, Get, Post, Body, Put, Param, UseGuards, HttpException } from '@nestjs/common';
 import { MomoService } from './mobile-money.service';
 import { IntouchAPIResponseInterface, MomoCollectionDTO, MomoTransferDTO } from './dto/create-mobile-money.dto';
-import { UpdateMobileMoneyDto } from './dto/update-mobile-money.dto';
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { MobileMoneyTransactionEntity } from './entities/mobile-money.entity';
 import { JwtAuthGuard } from '../auth/strategy/jwt-auth.guard';
 import { UsersService } from '../users/users.service';
-import { AuthService } from '../auth/auth.service';
 
 @Controller('mobile-money')
-@ApiTags('mobile-money')
+@ApiTags('Mobile-Money')
 @ApiBearerAuth('jwt') // This is the one that needs to match the name in main.ts
 @UseGuards(JwtAuthGuard)
 export class MobileMoneyController {
