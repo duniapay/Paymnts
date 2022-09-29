@@ -21,7 +21,7 @@ export const dbConfig = (): PostgresConnectionOptions => ({
   // Run migrations automatically,
   // you can disable this if you prefer running migration manually.
   migrationsRun: process.env.NODE_ENV !== 'production' ? true : false,
-  logging: Boolean(process.env.ENABLE_DB_LOGGING),
+  logging: false,
   migrations: [join(__dirname, '../migrations/**/*{.ts,.js}')],
   // cli: {
   //   migrationsDir: join(__dirname, '../migrations'),
