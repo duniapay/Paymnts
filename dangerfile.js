@@ -46,9 +46,8 @@ const hasTestChanges = testChanges.length > 0;
 
 // Warn if there are library changes, but not tests
 if (hasAppChanges && !hasTestChanges) {
-  warn("There are library changes, but not tests. That's OK as long as you're refactoring existing code");
+  warn('There are library changes, but not tests. That\'s OK as long as you\'re refactoring existing code');
 }
-
 
 const bigPRThreshold = 600;
 if (danger.github.pr.additions + danger.github.pr.deletions > bigPRThreshold) {
@@ -63,8 +62,13 @@ if (danger.github.pr.additions + danger.github.pr.deletions > bigPRThreshold) {
 // Don't have folks setting the package json version
 const packageDiff = danger.git.JSONDiffForFile('package.json');
 if (packageDiff.version && danger.github.pr.user.login !== 'SergeWilfried') {
-  fail("Please don't make package version changes");
+  fail('Please don\'t make package version changes');
 }
 
 danger.github.setSummaryMarkdown('Looking good');
 
+danger.git.commits.forEach((commit) => {
+  if (!commit.message.match(/^(feat:)|(fix:)|(major:)|(chore:)|(refactor:)/g)) {
+    fail(`Commit message '${commit.message}' does match the correct format`);
+  }
+});
