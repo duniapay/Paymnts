@@ -1,4 +1,5 @@
 import { danger, warn, fail } from 'danger';
+import * as fs from 'fs';
 
 // Warn (won’t fail the CI, just post a comment) if the PR has
 // changes in package.json but no changes in package-lock.json
@@ -12,6 +13,14 @@ if (packageChanged && !lockfileChanged) {
       'in package-lock.json. Make sure you’re using npm 5+.',
   );
 }
+
+const jsTestChanges = danger.git.modified_files.filter((f) => f.endsWith('.spec.js'));
+jsTestChanges.forEach((file) => {
+  const content = fs.readFileSync(file).toString();
+  if (content.includes('it.only') || content.includes('describe.only')) {
+    fail(`An \`.only\` was left in tests (${file})`);
+  }
+});
 
 // Add a CHANGELOG entry for app changes
 const hasChangelog = danger.git.modified_files.includes('changelog.md');
@@ -38,7 +47,7 @@ const hasTestChanges = testChanges.length > 0;
 
 // Warn if there are library changes, but not tests
 if (hasAppChanges && !hasTestChanges) {
-  warn("There are library changes, but not tests. That's OK as long as you're refactoring existing code");
+  warn('There are library changes, but not tests. That\'s OK as long as you\'re refactoring existing code');
 }
 
 const codeowners = fs.readFileSync('.github/CODEOWNERS', 'utf8').split('\n');
