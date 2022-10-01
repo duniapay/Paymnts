@@ -1,4 +1,4 @@
-name: CI Pull Requests
+name: DangerJs
 on:
   pull_request:
     branches: [develop]

@@ -40,12 +40,14 @@ if (danger.github.pr.body.length < 10) {
 }
 
 // Request changes to src also include changes to tests.
-const allFiles = danger.git.modified_files.concat(danger.git.created_files);
-const hasAppChanges = allFiles.some((p) => includes(p, 'src/'));
-const hasTestChanges = allFiles.some((p) => includes(p, '__tests__/'));
+const hasAppChanges = modifiedAppFiles.length > 0;
 
+const testChanges = modifiedAppFiles.filter((filepath) => filepath.includes('test'));
+const hasTestChanges = testChanges.length > 0;
+
+// Warn if there are library changes, but not tests
 if (hasAppChanges && !hasTestChanges) {
-  warn('This PR does not include changes to tests, even though it affects app code.');
+  warn("There are library changes, but not tests. That's OK as long as you're refactoring existing code");
 }
 
 const codeowners = fs.readFileSync('.github/CODEOWNERS', 'utf8').split('\n');
@@ -67,4 +69,14 @@ if (isOwnedCodeModified) {
   markdown(`## Automatic reviewers
   
 cc: ${[...uniqueMentions].join(', ')}`);
+}
+
+const bigPRThreshold = 600;
+if (danger.github.pr.additions + danger.github.pr.deletions > bigPRThreshold) {
+  warn(':exclamation: Big PR (' + ++errorCount + ')');
+  markdown(
+    '> (' +
+      errorCount +
+      ') : Pull Request size seems relatively large. If Pull Request contains multiple changes, split each into separate PR will helps faster, easier review.',
+  );
 }
