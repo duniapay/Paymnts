@@ -1,7 +1,6 @@
 import { SupportedOperatorEnum } from '@fiatconnect/fiatconnect-types';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString, Matches, MaxLength, Min, MinLength, ValidateIf } from 'class-validator';
-import { Unique } from 'typeorm/decorator/Unique';
+import { IsNotEmpty, IsNumber, IsString, Matches, MaxLength, MinLength, ValidateIf } from 'class-validator';
 
 export class TransferDTO {
   @IsNotEmpty()

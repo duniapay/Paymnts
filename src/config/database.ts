@@ -23,10 +23,6 @@ export const dbConfig = (): PostgresConnectionOptions => ({
   migrationsRun: process.env.NODE_ENV !== 'production' ? true : false,
   logging: false,
   migrations: [join(__dirname, '../migrations/**/*{.ts,.js}')],
-  // cli: {
-  //   migrationsDir: join(__dirname, '../migrations'),
-  //   entitiesDir: join(__dirname, '../**/*.entity{.ts,.js}'),
-  // },
 });
 
 export default dbConfig();
