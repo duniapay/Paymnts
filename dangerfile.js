@@ -1,6 +1,4 @@
 import { danger, warn, fail } from 'danger';
-import * as fs from 'fs';
-import jest from 'danger-plugin-jest';
 
 // Warn (won’t fail the CI, just post a comment) if the PR has
 // changes in package.json but no changes in package-lock.json
@@ -51,26 +49,6 @@ if (hasAppChanges && !hasTestChanges) {
   warn("There are library changes, but not tests. That's OK as long as you're refactoring existing code");
 }
 
-const codeowners = fs.readFileSync('.github/CODEOWNERS', 'utf8').split('\n');
-let mentions = [];
-codeowners.forEach((codeowner) => {
-  const pattern = codeowner.split(' ')[0];
-  const owners = codeowner.substring(pattern.length).trim().split(' ');
-
-  const modifiedFileHasOwner = (path) => minimatch(path, pattern);
-  const modifiesOwnedCode = danger.git.modified_files.filter(modifiedFileHasOwner).length > 0;
-
-  if (modifiesOwnedCode) {
-    mentions = mentions.concat(owners);
-  }
-});
-const isOwnedCodeModified = mentions.length > 0;
-if (isOwnedCodeModified) {
-  const uniqueMentions = new Set(mentions);
-  markdown(`## Automatic reviewers
-  
-cc: ${[...uniqueMentions].join(', ')}`);
-}
 
 const bigPRThreshold = 600;
 if (danger.github.pr.additions + danger.github.pr.deletions > bigPRThreshold) {
@@ -90,4 +68,3 @@ if (packageDiff.version && danger.github.pr.user.login !== 'SergeWilfried') {
 
 danger.github.setSummaryMarkdown('Looking good');
 
-jest();
