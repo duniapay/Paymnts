@@ -13,15 +13,6 @@ if (packageChanged && !lockfileChanged) {
   );
 }
 
-// Fail the CI when test shorcuts are found
-const jsTestChanges = danger.git.modified_files.filter((f) => f.endsWith('.spec.js'));
-jsTestChanges.forEach((file) => {
-  const content = fs.readFileSync(file).toString();
-  if (content.includes('it.only') || content.includes('describe.only')) {
-    fail(`An \`.only\` was left in tests (${file})`);
-  }
-});
-
 // Add a CHANGELOG entry for app changes
 const hasChangelog = danger.git.modified_files.includes('changelog.md');
 const isTrivial = (danger.github.pr.body + danger.github.pr.title).includes('#trivial');
