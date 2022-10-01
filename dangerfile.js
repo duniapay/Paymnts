@@ -1,4 +1,5 @@
 import { danger, warn, fail } from 'danger';
+import * as fs from 'fs';
 
 // Warn (won’t fail the CI, just post a comment) if the PR has
 // changes in package.json but no changes in package-lock.json
@@ -13,7 +14,6 @@ if (packageChanged && !lockfileChanged) {
   );
 }
 
-// Fail the CI when test shorcuts are found
 const jsTestChanges = danger.git.modified_files.filter((f) => f.endsWith('.spec.js'));
 jsTestChanges.forEach((file) => {
   const content = fs.readFileSync(file).toString();
@@ -40,14 +40,14 @@ if (danger.github.pr.body.length < 10) {
 }
 
 // Request changes to src also include changes to tests.
-const hasAppChanges = modifiedAppFiles.length > 0;
+const hasAppChanges = danger.git.modified_files.length > 0;
 
-const testChanges = modifiedAppFiles.filter((filepath) => filepath.includes('test'));
+const testChanges = danger.git.modified_files.filter((filepath) => filepath.includes('test'));
 const hasTestChanges = testChanges.length > 0;
 
 // Warn if there are library changes, but not tests
 if (hasAppChanges && !hasTestChanges) {
-  warn("There are library changes, but not tests. That's OK as long as you're refactoring existing code");
+  warn('There are library changes, but not tests. That\'s OK as long as you\'re refactoring existing code');
 }
 
 const codeowners = fs.readFileSync('.github/CODEOWNERS', 'utf8').split('\n');
