@@ -40,9 +40,9 @@ if (danger.github.pr.body.length < 10) {
 }
 
 // Request changes to src also include changes to tests.
-const hasAppChanges = modifiedAppFiles.length > 0;
+const hasAppChanges = danger.git.modified_files.length > 0;
 
-const testChanges = modifiedAppFiles.filter((filepath) => filepath.includes('test'));
+const testChanges = danger.git.modified_files.filter((filepath) => filepath.includes('test'));
 const hasTestChanges = testChanges.length > 0;
 
 // Warn if there are library changes, but not tests
