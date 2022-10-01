@@ -28,7 +28,8 @@
     "add:migration": "npm run build && npm run typeorm migration:generate -- -n",
     "apply:migration": "npm run build && npm run typeorm migration:run",
     "revert:migration": "npm run build && npm run typeorm migration:revert",
-    "drop:database": "npm run typeorm schema:drop"
+    "drop:database": "npm run typeorm schema:drop",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@casl/ability": "^5.4.3",
@@ -93,6 +94,7 @@
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
+    "husky": "^8.0.1",
     "jest": "27.0.6",
     "prettier": "^2.3.2",
     "supertest": "^6.1.3",

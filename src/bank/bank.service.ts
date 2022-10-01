@@ -39,6 +39,7 @@ export class BankService {
   public async update(id: string, updateBankDto: UpdateBankTransferDto): Promise<any> {
     const item = await this.repository.findOneBy({ id });
     // TODO: CREATE Entity
+    this.logger.log(`update ${updateBankDto}`);
     return this.repository.update({ id }, item);
   }
 

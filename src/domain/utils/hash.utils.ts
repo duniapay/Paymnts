@@ -1,9 +1,9 @@
-import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'crypto';
+import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
 
 const algorithm = 'aes-256-ctr';
 const secretKey = 'vOVH6sdmpNWjRRIqCc7rdxs01lwHzfr3';
 
-const encrypt = (id: { tx_id: string; amount:number; currency: string; partner_id: string, account?: string}) => {
+const encrypt = (id: { tx_id: string; amount: number; currency: string; partner_id: string; account?: string }) => {
   const { tx_id, account, amount, currency, partner_id } = id;
   const ID = `${partner_id}|${tx_id}|${account}|${currency}|${amount}`;
 

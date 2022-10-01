@@ -9,10 +9,7 @@ import { UpdateBankTransferDto } from './dto/update-bank.dto';
 @ApiTags('Bank')
 @UseGuards(JwtAuthGuard)
 export class BankController {
-  constructor(
-    private readonly bankService: BankService,) {
-
-    }
+  constructor(private readonly bankService: BankService) {}
 
   @Post('transfer')
   @ApiBody({
@@ -33,9 +30,7 @@ export class BankController {
   @ApiResponse({
     status: 200,
     description: 'Payments found',
-    type: Array<BankTransferDTO>,
   })
-
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   findAll() {
     return this.bankService.findAll();

@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { validate } from 'class-validator';
 import { LoggerService } from 'src/logger/logger.service';
 import { UsersService } from 'src/users/users.service';
-import { pbkdf2Sync, randomBytes } from 'crypto';
+import { pbkdf2Sync } from 'crypto';
 import { ConfigService } from '@nestjs/config';
 import { LoginDTO, RegisterDTO } from '../users/dto/create-user.dto';
 

@@ -8,8 +8,8 @@ import { UsersService } from '../users/users.service';
 
 @Controller('kyc')
 @ApiTags('KYC')
-// @ApiBearerAuth('jwt') // This is the one that needs to match the name in main.ts
-// @UseGuards(JwtAuthGuard)
+@ApiBearerAuth('jwt') // This is the one that needs to match the name in main.ts
+@UseGuards(JwtAuthGuard)
 export class IdentityController {
   constructor(private readonly identityService: IdentityService, private usersService: UsersService) {}
 

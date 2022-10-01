@@ -1,4 +1,3 @@
-import { ValidateIf } from 'class-validator';
 import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()

@@ -32,7 +32,7 @@ export class User {
 
   @Column({ nullable: false })
   country: string;
-  
+
   @Column()
   balance: number;
 

@@ -11,7 +11,7 @@ import {
   MomoCollectionDTO,
   MomoTransferDTO,
 } from './dto/create-mobile-money.dto';
-import { encrypt, decrypt } from '../domain/utils/hash.utils';
+import { encrypt } from '../domain/utils/hash.utils';
 import { MobileMoneyTransactionEntity } from './entities/mobile-money.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -85,10 +85,10 @@ export class MomoService {
   }
 
   public async update(id: string, requestStatus: IntouchAPIResponseInterface): Promise<MobileMoneyTransactionEntity> {
-    const { payToken, status, message, service_id, partner_transaction_id, gu_transaction_id, recipient_phone_number, amount } =
-      requestStatus;
-    const decrypted = decrypt(partner_transaction_id);
-    const { currency, partner_id, tx_id, account } = decrypted;
+    const { partner_transaction_id } = requestStatus;
+    // const decrypted = decrypt(partner_transaction_id);
+    // const { currency, partner_id, tx_id, account } = decrypted;
+    this.logger.log(`update ${partner_transaction_id}`);
 
     // TODO: Find transaction by id
     // TODO: Update transaction status
@@ -285,7 +285,6 @@ export class MomoService {
     operator: SupportedOperatorEnum,
     otp: string,
   ): IntouchCollectRequestBody {
-    console.log(operator.toUpperCase());
     if (country === 'BF') {
       return {
         idFromClient: id,

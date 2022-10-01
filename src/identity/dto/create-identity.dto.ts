@@ -1,9 +1,8 @@
 import { KycSchema, KycStatus } from '@fiatconnect/fiatconnect-types';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsOptional, IsNotEmpty, IsEmail, ValidateNested, IsString, Matches, isURL, IsUrl } from 'class-validator';
+import { IsOptional, IsNotEmpty, IsEmail, IsString, Matches, IsUrl } from 'class-validator';
 import { AddressDto } from './address.dto';
-import { DayOfBirthDto } from './dob.dto';
 
 export class CreateIdentityDto {
   @IsNotEmpty()
