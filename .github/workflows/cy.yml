@@ -12,7 +12,7 @@ jobs:
         with:
           node-version: 16.x
       - name: yarn install
-        run: yarn install
+        run: yarn install && yarn add fs danger-plugin-jest --dev
       - name: Danger
         run: yarn danger ci
         env:
