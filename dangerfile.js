@@ -61,7 +61,7 @@ if (danger.github.pr.additions + danger.github.pr.deletions > bigPRThreshold) {
 }
 
 // Don't have folks setting the package json version
-const packageDiff = await danger.git.JSONDiffForFile('package.json');
+const packageDiff = danger.git.JSONDiffForFile('package.json');
 if (packageDiff.version && danger.github.pr.user.login !== 'SergeWilfried') {
   fail("Please don't make package version changes");
 }
