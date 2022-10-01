@@ -1,5 +1,6 @@
 import { danger, warn, fail } from 'danger';
 import * as fs from 'fs';
+import jest from 'danger-plugin-jest';
 
 // Warn (won’t fail the CI, just post a comment) if the PR has
 // changes in package.json but no changes in package-lock.json
@@ -47,7 +48,7 @@ const hasTestChanges = testChanges.length > 0;
 
 // Warn if there are library changes, but not tests
 if (hasAppChanges && !hasTestChanges) {
-  warn('There are library changes, but not tests. That\'s OK as long as you\'re refactoring existing code');
+  warn("There are library changes, but not tests. That's OK as long as you're refactoring existing code");
 }
 
 const codeowners = fs.readFileSync('.github/CODEOWNERS', 'utf8').split('\n');
@@ -80,3 +81,13 @@ if (danger.github.pr.additions + danger.github.pr.deletions > bigPRThreshold) {
       ') : Pull Request size seems relatively large. If Pull Request contains multiple changes, split each into separate PR will helps faster, easier review.',
   );
 }
+
+// Don't have folks setting the package json version
+const packageDiff = await danger.git.JSONDiffForFile('package.json');
+if (packageDiff.version && danger.github.pr.user.login !== 'SergeWilfried') {
+  fail("Please don't make package version changes");
+}
+
+danger.github.setSummaryMarkdown('Looking good');
+
+jest();
