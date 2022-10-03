@@ -1,6 +1,7 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { BankTransactionEntity } from '../../bank/entities/bank.entity';
 import { MobileMoneyTransactionEntity } from '../../mobile-money/entities/mobile-money.entity';
+import { WebhookEntity } from '../../webhook/entities/webhook.entity';
 import { Role } from '../enums/role.enum';
 
 @Entity()
@@ -42,12 +43,13 @@ export class User {
   @Column({
     type: 'enum',
     enum: Role,
-    default: Role.standard,
+    default: Role.partner,
   })
   roles: Role[];
 
-  // currenciesAccount
-  // fiatAccounts
+  @OneToOne(() => WebhookEntity)
+  @JoinColumn()
+  webhook_url: WebhookEntity;
 
   @OneToMany(() => MobileMoneyTransactionEntity, (tx) => tx.owner) // note: we will create author property in the Photo class below
   momo_transfers: MobileMoneyTransactionEntity[];

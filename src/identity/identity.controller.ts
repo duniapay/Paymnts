@@ -43,7 +43,7 @@ export class IdentityController {
   }
 
   @Get()
-  @ApiResponse({ status: 403, description: 'Unsufficient Balance.' })
+  @ApiResponse({ status: 403, description: 'Operation Failed' })
   @ApiResponse({
     status: 404,
     description: 'Not found',
@@ -53,7 +53,7 @@ export class IdentityController {
   }
 
   @Get(':id')
-  @ApiResponse({ status: 403, description: 'Unsufficient Balance.' })
+  @ApiResponse({ status: 403, description: 'Operation Failed' })
   @ApiResponse({
     status: 404,
     description: 'Not found',
@@ -73,7 +73,7 @@ export class IdentityController {
   }
 
   @Delete(':id')
-  @ApiResponse({ status: 403, description: 'Unsufficient Balance.' })
+  @ApiResponse({ status: 403, description: 'Operation Failed' })
   @ApiResponse({
     status: 404,
     description: 'Not found',
