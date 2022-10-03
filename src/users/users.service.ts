@@ -21,11 +21,6 @@ export class UsersService {
     user.business_name = createUserDto.business_name;
     user.country = createUserDto.country;
     user.balance = autoFundAccount ? 5000 : 0;
-
-    const webhookUrlEntity = new WebhookEntity();
-    webhookUrlEntity.url = '';
-    user.webhook_url = webhookUrlEntity;
-
     user.isActive = false;
     user.currency = createUserDto.currency;
     user.email = createUserDto.email;
@@ -50,6 +45,9 @@ export class UsersService {
   findOne(filter: any): Promise<User> {
     const query = {
       where: filter,
+      relations: {
+        webhook_url: true,
+      },
     } as FindOneOptions<User>;
     return this.usersRepository.findOne(query);
   }

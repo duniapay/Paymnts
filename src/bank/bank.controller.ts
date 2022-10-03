@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards } from '@nestjs/common';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, UseGuards, Put } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/strategy/jwt-auth.guard';
 import { BankService } from './bank.service';
 import { BankTransferDTO } from './dto/create-bank.dto';
@@ -7,11 +7,12 @@ import { UpdateBankTransferDto } from './dto/update-bank.dto';
 
 @Controller('bank')
 @ApiTags('Bank')
-@UseGuards(JwtAuthGuard)
 export class BankController {
   constructor(private readonly bankService: BankService) {}
 
   @Post('transfer')
+  @ApiBearerAuth('jwt') // This is the one that needs to match the name in main.ts
+  @UseGuards(JwtAuthGuard)
   @ApiBody({
     required: true,
     description: 'Send funds to a Bank account',
@@ -37,6 +38,8 @@ export class BankController {
   }
 
   @Get('transfer/:id')
+  @ApiBearerAuth('jwt') // This is the one that needs to match the name in main.ts
+  @UseGuards(JwtAuthGuard)
   @ApiResponse({
     status: 200,
     description: 'A Payment has been successfully fetched',
@@ -51,7 +54,7 @@ export class BankController {
     return this.bankService.findOne(id);
   }
 
-  @Patch('transfer/:id')
+  @Put('feed')
   @ApiBody({
     required: true,
     description: 'Updates a bank transfer',

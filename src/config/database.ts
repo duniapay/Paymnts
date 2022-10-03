@@ -16,11 +16,11 @@ export const dbConfig = (): PostgresConnectionOptions => ({
   // },
   entities: [join(__dirname, '../**/*.entity{.ts,.js}')],
   // We are using migrations, synchronize should be set to false.
-  synchronize: process.env.NODE_ENV !== 'production' ? true : false,
-  dropSchema: process.env.NODE_ENV !== 'production' ? true : false,
+  synchronize: process.env.NODE_ENV === 'development' ? true : false,
+  dropSchema: process.env.NODE_ENV === 'development' ? true : false,
   // Run migrations automatically,
   // you can disable this if you prefer running migration manually.
-  migrationsRun: process.env.NODE_ENV !== 'production' ? true : false,
+  migrationsRun: process.env.NODE_ENV === 'development' ? true : false,
   logging: false,
   migrations: [join(__dirname, '../migrations/**/*{.ts,.js}')],
 });
