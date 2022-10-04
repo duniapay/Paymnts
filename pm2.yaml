@@ -8,5 +8,5 @@ apps:
       PORT: ${PORT}
       NODE_ENV: development
     env_production:
-      NODE_PORT: ${PORT}
+      PORT: ${PORT}
       NODE_ENV: production
