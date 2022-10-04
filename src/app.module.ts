@@ -13,6 +13,7 @@ import { MomoService } from './mobile-money/mobile-money.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { IdentityModule } from './identity/identity.module';
+import { WebhookModule } from './webhook/webhook.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { IdentityModule } from './identity/identity.module';
     BankModule,
     MobileMoneyModule,
     IdentityModule,
+    WebhookModule,
   ],
   controllers: [AppController],
   providers: [AppService, MomoService, BankService],

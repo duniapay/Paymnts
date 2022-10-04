@@ -11,6 +11,7 @@ import * as basicAuth from 'express-basic-auth';
 import { IdentityModule } from './identity/identity.module';
 import { BankModule } from './bank/bank.module';
 import { MobileMoneyModule } from './mobile-money/mobile-money.module';
+import { WebhookModule } from './webhook/webhook.module';
 
 const SWAGGER_ENVS = ['local', 'dev', 'staging'];
 
@@ -56,7 +57,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config, {
-    include: [BankModule, MobileMoneyModule, IdentityModule],
+    include: [BankModule, MobileMoneyModule, IdentityModule, WebhookModule],
   });
   SwaggerModule.setup('docs', app, document);
 
