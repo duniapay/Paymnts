@@ -14,7 +14,7 @@ import { MobileMoneyModule } from './mobile-money/mobile-money.module';
 import { WebhookModule } from './webhook/webhook.module';
 import { AuthModule } from './auth/auth.module';
 
-const SWAGGER_ENVS = ['local', 'dev', 'staging'];
+const SWAGGER_ENVS = ['local', 'development', 'staging'];
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
