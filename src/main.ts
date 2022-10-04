@@ -66,8 +66,6 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggingInterceptor(new LoggerService()));
   const PORT = process.env.PORT || 3000;
 
-  app.listen(PORT, () => {
-    console.log(`Our app is running on port ${PORT}`);
-  });
+  app.listen(PORT);
 }
 bootstrap();
