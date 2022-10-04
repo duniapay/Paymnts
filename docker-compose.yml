@@ -1,41 +1,88 @@
 version: '3.9'
 
 services:
-  # app_server:
-  #   container_name: app_server
-  #   image: app_server:1.0.0
-  #   build:
-  #     context: .
-  #     target: production
-  #     dockerfile: ./Dockerfile
-  #   command: npm run start:prod
-  #   env_file: .env
-  #   ports:
-  #     - '3000:3000'
-  #     - '9229:9229'
-  #   networks:
-  #     - app-network
-  #   volumes:
-  #     - .:/usr/src/app
-  #     - /usr/src/app/node_modules
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - database
+  fiatapi:
+    # application rely on database running
+    depends_on:
+      - db
+    # this build context will take the commands from Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # image name
+    image: fiat-api
+    # container name
+    container_name: fiatapi
+    # always restart the container if it stops.
+    restart: always
+    # docker run -t is allow
+    tty: true
+    # application port, this is take value from env file
+    ports:
+      - "${PORT}:${PORT}"
+    # working directory
+    working_dir: /var/www/paymnts
+    # application environment
+    environment:
+      SERVICE_NAME: fiatapi
+      SERVICE_TAGS: dev
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
+      VIRTUAL_PORT: ${VIRTUAL_PORT}
+    # save (persist) data and also to share data between containers
+    volumes:
+      - ./:/var/www/paymnts
+      - /var/www/paymnts/node_modules
+    # application network, each container for a service joins this network
+    networks:
+      - app-network
   database:
-    container_name: app_postgres_dev
+    container_name: db
     image: postgres:12
     env_file: .env
     volumes:
       - db:/var/lib/postgresql/data
     networks:
       - app-network
+    expose:
+      - 5432
     ports:
-      - '5432:5432'
+      - 5434:5432
     healthcheck:
       test: pg_isready
       interval: 10s
       timeout: 5s
       retries: 5
+  # Web server service
+  nginx-proxy:
+    # pull image from docker hub
+    image: nginx
+    # container name
+    container_name: nginx-proxy
+    # always restart, except that when the container is stopped
+    restart: unless-stopped
+    # docker run -t is allow
+    tty: true
+    # web server port default 81 and ssl run in port 443
+    ports:
+      - "81:81"
+      - "443:443"
+    # save (persist) data and also to share data between containers
+    volumes:
+      - ./:/var/www/paymnts
+      - ./nginx/conf.d/:/etc/nginx/conf.d
+    # web server rely on application running
+    depends_on:
+      - fiatapi
+    # application network, each container for a service joins this network
+    networks:
+      - app-network
+
+    healthcheck:
+        test: curl --fail http://localhost || exit 1
+        interval: 60s
+        retries: 5
+        start_period: 20s
+        timeout: 10s
   redis:
     image: redis:alpine
     container_name: redis
@@ -46,7 +93,10 @@ services:
       - cache:/data
 networks:
   app-network:
-
+    # nginx external network
+    external:
+      name: nginx-proxy
+    driver: bridge
 volumes:
   db:
   cache:
