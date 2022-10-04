@@ -2,7 +2,7 @@ apps:
   - script: ./dist/main.js
     name: paymnts-app
     watch: true
-    instances: max
+    instances: 2
     exec_mode: cluster
     env:
       PORT: 3000
