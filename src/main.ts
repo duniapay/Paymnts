@@ -12,6 +12,7 @@ import { IdentityModule } from './identity/identity.module';
 import { BankModule } from './bank/bank.module';
 import { MobileMoneyModule } from './mobile-money/mobile-money.module';
 import { WebhookModule } from './webhook/webhook.module';
+import { AuthModule } from './auth/auth.module';
 
 const SWAGGER_ENVS = ['local', 'dev', 'staging'];
 
@@ -36,7 +37,7 @@ async function bootstrap() {
   }
 
   const pkg = JSON.parse(await promises.readFile(join('.', 'package.json'), 'utf8'));
-
+  const server = process.env.NODE_ENV === 'development' ? 'http://localhost:7000' : 'https://api-staging.dunia.africa';
   const config = new DocumentBuilder()
     .setTitle('Cowrie')
     .setVersion(pkg.version)
@@ -53,11 +54,11 @@ async function bootstrap() {
       },
       'jwt', // This name here is important for matching up with @ApiBearerAuth() in your controller!
     )
-    .addServer('https://api-staging.dunia.africa')
+    .addServer(server)
     .build();
 
   const document = SwaggerModule.createDocument(app, config, {
-    include: [BankModule, MobileMoneyModule, IdentityModule, WebhookModule],
+    include: [AuthModule, BankModule, MobileMoneyModule, IdentityModule, WebhookModule],
   });
   SwaggerModule.setup('docs', app, document);
 

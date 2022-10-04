@@ -10,7 +10,6 @@ import { LoginDTO, RegisterDTO } from '../users/dto/create-user.dto';
 @Injectable()
 export class AuthService {
   private readonly salt: string;
-  public balance: number;
 
   constructor(
     private readonly logger: LoggerService = new Logger(AuthService.name),
@@ -43,7 +42,6 @@ export class AuthService {
     if (isOk) {
       // Get user information
       const userDetails = await this.userService.findOne({ email: user.email });
-      this.balance = userDetails.balance;
       // Check if user exists
       if (userDetails == null) {
         return { status: 404, msg: { msg: 'Account not found' } };
@@ -51,6 +49,8 @@ export class AuthService {
 
       const hash = pbkdf2Sync(user.password, this.salt, 1000, 64, 'sha512').toString('hex');
       // Check if the given password match with saved password
+      this.logger.debug(`hash ${hash}`);
+
       const isValid = hash === userDetails.password;
       if (isValid) {
         // Generate JWT token
@@ -76,7 +76,6 @@ export class AuthService {
   public async register(body: any): Promise<Record<string, any>> {
     // Validation Flag
     let isOk = false;
-    let hash = '';
 
     // Transform body into DTO
     const userDTO = new RegisterDTO();
@@ -92,7 +91,7 @@ export class AuthService {
 
     // Hashing user's salt and password with 1000 iterations,
     //  64 length and sha512 digest
-    hash = pbkdf2Sync(body.password, this.salt, 1000, 64, 'sha512').toString('hex');
+    const hash = pbkdf2Sync(body.password, this.salt, 1000, 64, 'sha512').toString('hex');
     userDTO.password = hash;
 
     // Validate DTO against validate function from class-validator
@@ -109,7 +108,7 @@ export class AuthService {
         isOk = false;
       });
       if (isOk) {
-        return { status: 201, content: { ...createdUser, password: undefined } };
+        return { status: 201, content: { ...createdUser } };
       } else {
         return { status: 400, content: { msg: 'User already exists' } };
       }

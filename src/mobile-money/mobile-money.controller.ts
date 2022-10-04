@@ -8,11 +8,11 @@ import { UsersService } from '../users/users.service';
 
 @Controller('mobile-money')
 @ApiTags('Mobile-Money')
-@ApiBearerAuth('jwt') // This is the one that needs to match the name in main.ts
-@UseGuards(JwtAuthGuard)
 export class MobileMoneyController {
   constructor(private readonly mobileMoneyService: MomoService, private usersService: UsersService) {}
   @Post('collect')
+  @ApiBearerAuth('jwt') // This is the one that needs to match the name in main.ts
+  @UseGuards(JwtAuthGuard)
   @ApiBody({
     required: true,
     description: 'Collect funds from a verified mobile money account',
@@ -35,6 +35,8 @@ export class MobileMoneyController {
   }
 
   @Post('transfer')
+  @ApiBearerAuth('jwt') // This is the one that needs to match the name in main.ts
+  @UseGuards(JwtAuthGuard)
   @ApiBody({
     required: true,
     description: 'Sends funds to a verified mobile money account',
@@ -56,6 +58,8 @@ export class MobileMoneyController {
   }
 
   @Get()
+  @ApiBearerAuth('jwt') // This is the one that needs to match the name in main.ts
+  @UseGuards(JwtAuthGuard)
   @ApiResponse({
     status: 200,
     description: 'Collection has been successfully fetched',
@@ -70,7 +74,7 @@ export class MobileMoneyController {
     return resp;
   }
 
-  @Put()
+  @Put('feed')
   @ApiBody({
     required: true,
     description: 'Updates a momo transfer',
@@ -84,8 +88,7 @@ export class MobileMoneyController {
     status: 404,
     description: 'A payment with given id does not exist.',
   })
-  update(@Param('id') id: string, @Body() updateMobileMoneyDto: IntouchAPIResponseInterface): Promise<MomoTransferDTO> {
-    this.mobileMoneyService.update(id, updateMobileMoneyDto);
-    return Promise.resolve(new MomoTransferDTO());
+  update(@Body() updateMobileMoneyDto: IntouchAPIResponseInterface): Promise<any> {
+    return this.mobileMoneyService.update(updateMobileMoneyDto);
   }
 }

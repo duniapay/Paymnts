@@ -1,12 +1,15 @@
 import { KycStatus } from '@fiatconnect/fiatconnect-types';
+import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Queue } from 'bull';
 import { Repository } from 'typeorm';
 import { CreateIdentityDto } from './dto/create-identity.dto';
 import { UpdateIdentityDto } from './dto/update-identity.dto';
 import { IdentityEntity } from './entities/identity.entity';
+import { AMLService } from './providers/aml.service';
 
 @Injectable()
 export class IdentityService {
@@ -16,8 +19,9 @@ export class IdentityService {
     private readonly configService: ConfigService,
     @InjectRepository(IdentityEntity)
     private repository: Repository<IdentityEntity>,
+    @InjectQueue('kyc-queue') private queue: Queue,
   ) {}
-  create(createIdentityDto: CreateIdentityDto) {
+  async create(createIdentityDto: CreateIdentityDto) {
     const formattedDOB = new Date(createIdentityDto.dateOfBirth);
     const entity = new IdentityEntity();
     entity.kycSchemaName = createIdentityDto.kycSchemaName;
@@ -37,15 +41,8 @@ export class IdentityService {
     } else {
       entity.status = KycStatus.KycDenied;
     }
+    await this.queue.add('verify', entity);
     return this.repository.save(entity);
-  }
-
-  @Cron(CronExpression.EVERY_10_SECONDS)
-  async handleCron() {
-    const unprocessedFiles = await this.repository.find({ where: { status: KycStatus.KycPending } });
-    // Extracts Data from Selfie document
-    // Extracts Text from Identification Document
-    // Expire Identity Document
   }
 
   findAll(): Promise<IdentityEntity[]> {
@@ -56,7 +53,7 @@ export class IdentityService {
     return this.repository.findOneBy({ id });
   }
 
-  update(id: string, updateIdentityDto: UpdateIdentityDto) {
+  async update(id: string, updateIdentityDto: UpdateIdentityDto) {
     const entity = new IdentityEntity();
     entity.kycSchemaName = updateIdentityDto.kycSchemaName;
     entity.address = updateIdentityDto.address;

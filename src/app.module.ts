@@ -14,6 +14,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { IdentityModule } from './identity/identity.module';
 import { WebhookModule } from './webhook/webhook.module';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -38,5 +39,6 @@ import { WebhookModule } from './webhook/webhook.module';
   ],
   controllers: [AppController],
   providers: [AppService, MomoService, BankService],
+  exports: [],
 })
 export class AppModule {}
