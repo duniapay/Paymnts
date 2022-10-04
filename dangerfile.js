@@ -50,6 +50,7 @@ if (hasAppChanges && !hasTestChanges) {
 }
 
 const bigPRThreshold = 600;
+const errorCount = 0;
 if (danger.github.pr.additions + danger.github.pr.deletions > bigPRThreshold) {
   warn(':exclamation: Big PR (' + ++errorCount + ')');
   markdown(
