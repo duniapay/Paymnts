@@ -1,40 +1,40 @@
 version: '3.9'
 
 services:
-  fiatapi:
-    # application rely on database running
-    depends_on:
-      - db
-    # this build context will take the commands from Dockerfile
-    build:
-      context: .
-      dockerfile: Dockerfile
-    # image name
-    image: fiat-api
-    # container name
-    container_name: fiatapi
-    # always restart the container if it stops.
-    restart: always
-    # docker run -t is allow
-    tty: true
-    # application port, this is take value from env file
-    ports:
-      - "${PORT}:${PORT}"
-    # working directory
-    working_dir: /var/www/paymnts
-    # application environment
-    environment:
-      SERVICE_NAME: fiatapi
-      SERVICE_TAGS: dev
-      VIRTUAL_HOST: ${VIRTUAL_HOST}
-      VIRTUAL_PORT: ${VIRTUAL_PORT}
-    # save (persist) data and also to share data between containers
-    volumes:
-      - ./:/var/www/paymnts
-      - /var/www/paymnts/node_modules
-    # application network, each container for a service joins this network
-    networks:
-      - app-network
+  # fiatapi:
+  #   # application rely on database running
+  #   depends_on:
+  #     - db
+  #   # this build context will take the commands from Dockerfile
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   # image name
+  #   image: fiat-api
+  #   # container name
+  #   container_name: fiatapi
+  #   # always restart the container if it stops.
+  #   restart: always
+  #   # docker run -t is allow
+  #   tty: true
+  #   # application port, this is take value from env file
+  #   ports:
+  #     - "${PORT}:${PORT}"
+  #   # working directory
+  #   working_dir: /var/www/paymnts
+  #   # application environment
+  #   environment:
+  #     SERVICE_NAME: fiatapi
+  #     SERVICE_TAGS: dev
+  #     VIRTUAL_HOST: ${VIRTUAL_HOST}
+  #     VIRTUAL_PORT: ${VIRTUAL_PORT}
+  #   # save (persist) data and also to share data between containers
+  #   volumes:
+  #     - ./:/var/www/paymnts
+  #     - /var/www/paymnts/node_modules
+  #   # application network, each container for a service joins this network
+  #   networks:
+  #     - app-network
   database:
     container_name: db
     image: postgres:12
@@ -71,8 +71,8 @@ services:
       - ./:/var/www/paymnts
       - ./nginx/conf.d/:/etc/nginx/conf.d
     # web server rely on application running
-    depends_on:
-      - fiatapi
+    # depends_on:
+    #   - fiatapi
     # application network, each container for a service joins this network
     networks:
       - app-network

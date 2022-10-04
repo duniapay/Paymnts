@@ -5,8 +5,8 @@ apps:
     instances: max
     exec_mode: cluster
     env:
-      PORT: ${PORT}
+      PORT: 3000
       NODE_ENV: development
     env_production:
-      PORT: ${PORT}
+      PORT: 8080
       NODE_ENV: production
