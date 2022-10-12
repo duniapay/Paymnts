@@ -15,6 +15,7 @@ import { UsersModule } from './users/users.module';
 import { IdentityModule } from './identity/identity.module';
 import { WebhookModule } from './webhook/webhook.module';
 import { BullModule } from '@nestjs/bull';
+import { QueueModule } from './queue/queue.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { BullModule } from '@nestjs/bull';
     MobileMoneyModule,
     IdentityModule,
     WebhookModule,
+    QueueModule,
   ],
   controllers: [AppController],
   providers: [AppService, MomoService, BankService],

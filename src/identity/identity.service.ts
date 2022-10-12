@@ -2,14 +2,12 @@ import { KycStatus } from '@fiatconnect/fiatconnect-types';
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Queue } from 'bull';
 import { Repository } from 'typeorm';
 import { CreateIdentityDto } from './dto/create-identity.dto';
 import { UpdateIdentityDto } from './dto/update-identity.dto';
 import { IdentityEntity } from './entities/identity.entity';
-import { AMLService } from './providers/aml.service';
 
 @Injectable()
 export class IdentityService {
@@ -66,7 +64,9 @@ export class IdentityService {
     entity.dateOfBirth = new Date(updateIdentityDto.dateOfBirth);
     entity.middleName = updateIdentityDto.middleName;
     entity.status = KycStatus.KycPending;
-    return this.repository.update({ id }, entity);
+    const savedEntity = await this.repository.update({ id }, entity);
+
+    return savedEntity;
   }
 
   async remove(id: string) {

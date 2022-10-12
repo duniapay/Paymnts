@@ -1,6 +1,6 @@
 import { SupportedOperatorEnum } from '@fiatconnect/fiatconnect-types';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString, Matches, MaxLength, MinLength, ValidateIf } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, Matches, MaxLength, MinLength, ValidateIf } from 'class-validator';
 
 export class TransferDTO {
   @IsNotEmpty()
@@ -92,6 +92,12 @@ export class TransferDTO {
     example: 'dakio',
   })
   receiver_first_name: string;
+
+  @IsNumber()
+  @IsOptional()
+  fee?: number;
+  @IsOptional()
+  meta?: any;
 }
 
 export class MomoTransferDTO extends TransferDTO {

@@ -13,4 +13,6 @@ export class MobileMoneyTransactionEntity extends BaseTransactionEntity {
 
   @ManyToOne(() => User, (user) => user.momo_transfers)
   owner: User;
+  @Column({ type: 'simple-json', nullable: true })
+  meta: any;
 }

@@ -6,6 +6,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { TransferStatus } from '@fiatconnect/fiatconnect-types';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class MomoService {
@@ -15,7 +17,9 @@ export class MomoService {
     private readonly configService: ConfigService,
     @InjectRepository(MobileMoneyTransactionEntity)
     private repository: Repository<MobileMoneyTransactionEntity>,
-    @InjectQueue('mobile-money-payments-queue') private queue: Queue,
+    private readonly userService: UsersService,
+
+    @InjectQueue('transactions-queue') private queue: Queue,
   ) {}
 
   public async findOne(id: string): Promise<MobileMoneyTransactionEntity> {
@@ -35,8 +39,9 @@ export class MomoService {
     entity.sending_reason = tx.sending_reason;
     entity.receiver_first_name = tx.receiver_first_name;
     entity.receiver_last_name = tx.receiver_last_name;
-    entity.status = 'Operation being processed.';
+    entity.status = TransferStatus.TransferFiatFundsDebited;
     this.logger.log('Creating a transaction');
+    const user = await this.userService.findOne({ id: entity.partner_id });
 
     if (tx.otp !== undefined) {
       entity.otp = tx.otp;
@@ -54,6 +59,9 @@ export class MomoService {
         receiver_first_name: tx.receiver_first_name,
         city: tx.city,
         sending_reason: tx.sending_reason,
+        meta: {
+          url: user.webhook_url,
+        },
       };
       this.queue.add('collect', dto);
     } else {
@@ -69,28 +77,26 @@ export class MomoService {
         receiver_first_name: tx.receiver_first_name,
         city: tx.city,
         sending_reason: tx.sending_reason,
+        meta: {
+          url: user.webhook_url,
+        },
       };
+
+      const savedEntity = await this.repository.save(entity);
+      dto.meta.txId = savedEntity.id;
       this.queue.add('transfer', dto);
+
+      return savedEntity;
     }
-    return this.repository.save(entity);
   }
 
   public async update(requestStatus: IntouchAPIResponseInterface): Promise<any> {
     const { partner_transaction_id, status, recipient_phone_number } = requestStatus;
-    // const decrypted = decrypt(partner_transaction_id);
-    // const { currency, partner_id, tx_id, account } = decrypted;
     this.logger.log(`update ${partner_transaction_id}`);
     const entity = await this.repository.findOneBy({ id: partner_transaction_id });
-    entity.status = status;
+    entity.status = TransferStatus.TransferFiatFundsDebited;
     const updateResult = await this.repository.update({ id: partner_transaction_id }, entity);
-    await this.queue.add('notify', {
-      user_id: entity.owner.id,
-      url: entity.owner.webhook_url.url,
-      tx: {
-        status,
-        failure_reason: entity.failure_reason,
-      },
-    });
+    entity.status = TransferStatus.TransferComplete;
     return updateResult;
   }
 }

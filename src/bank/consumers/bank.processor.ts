@@ -1,8 +1,9 @@
 import { OnQueueActive, Process, Processor } from '@nestjs/bull';
 import { Job } from 'bull';
+import { BankTransferDTO } from '../dto/create-bank.dto';
 import { GTBankService } from '../providers/gtbank.service';
 
-@Processor('bank-payments-queue')
+@Processor('transactions-queue')
 export class BankProcessor {
   constructor(private readonly gTBankService: GTBankService) {}
 
@@ -11,21 +12,10 @@ export class BankProcessor {
    * @param job
    * @returns
    */
-  @Process('transfer')
-  async transfer(job: Job) {
+  @Process('bank-transfer')
+  async transfer(job: Job<BankTransferDTO>) {
     // console.log('transfer job details ', job);
     // await this.intouchService.transfer(vehicleArray);
-  }
-
-  /**
-   * collect funds from a mobile-money account
-   * @param job
-   * @returns
-   */
-  @Process('collect')
-  async collect(job: Job) {
-    // console.log('collection job details ', job);
-    // await this.intouchService.collect(vehicleArray);
   }
 
   @OnQueueActive()

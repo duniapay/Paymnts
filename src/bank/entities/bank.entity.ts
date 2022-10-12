@@ -19,4 +19,7 @@ export class BankTransactionEntity extends BaseTransactionEntity {
 
   @ManyToOne(() => User, (user) => user.bank_transfers)
   owner: User;
+
+  @Column({ type: 'simple-json', nullable: true })
+  meta: any;
 }

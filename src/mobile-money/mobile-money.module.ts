@@ -5,27 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MobileMoneyTransactionEntity } from './entities/mobile-money.entity';
 import { LoggerModule } from '../logger/logger.module';
 import { UsersModule } from '../users/users.module';
-import { BullModule } from '@nestjs/bull';
 import { MomoProcessor } from './consumers/mobile-money.processor';
 import { IntouchService } from './providers/intouch.service';
+import { QueueModule } from '../queue/queue.module';
 
 @Module({
-  imports: [
-    LoggerModule,
-    UsersModule,
-    TypeOrmModule.forFeature([MobileMoneyTransactionEntity]),
-    BullModule.forRoot({
-      redis: {
-        host: 'localhost',
-        port: 6379,
-      },
-    }),
-    BullModule.registerQueue({
-      name: 'mobile-money-payments-queue',
-    }),
-  ],
+  imports: [LoggerModule, UsersModule, QueueModule, TypeOrmModule.forFeature([MobileMoneyTransactionEntity]), QueueModule],
   controllers: [MobileMoneyController],
   providers: [MomoService, MomoProcessor, IntouchService],
-  exports: [TypeOrmModule, BullModule],
+  exports: [TypeOrmModule],
 })
 export class MobileMoneyModule {}

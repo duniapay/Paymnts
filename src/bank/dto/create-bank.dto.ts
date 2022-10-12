@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDivisibleBy, IsNotEmpty, IsNumber, IsString, Matches, MaxLength, Min, MinLength, ValidateIf } from 'class-validator';
+import { IsDivisibleBy, IsNotEmpty, IsNumber, IsOptional, IsString, Matches, MaxLength, Min, MinLength, ValidateIf } from 'class-validator';
 
 export class PaymntModel {
   @IsString()
@@ -118,7 +118,14 @@ export class BankTransferDTO extends PaymntModel {
     description: 'Sending reason',
     example: 'School fees',
   })
-  sending_reason: string;
+  @IsString()
+  @IsOptional()
+  sending_reason?: string;
+  @IsNumber()
+  @IsOptional()
+  fee?: number;
+  @IsOptional()
+  meta?: any;
 }
 
 export class BankName {

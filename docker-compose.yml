@@ -83,9 +83,9 @@ services:
         retries: 5
         start_period: 20s
         timeout: 10s
-  redis:
+  cache:
     image: redis:alpine
-    container_name: redis
+    container_name: cache
     restart: always
     ports:
       - '9000:6379'

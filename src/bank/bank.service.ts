@@ -8,6 +8,7 @@ import { Banks, BankTransferDTO } from './dto/create-bank.dto';
 import { UpdateBankTransferDto } from './dto/update-bank.dto';
 import { BankTransactionEntity } from './entities/bank.entity';
 import { GTBankService } from './providers/gtbank.service';
+import { WebhookEventType, TransferStatus, TransferType, FiatType } from '@fiatconnect/fiatconnect-types';
 
 @Injectable()
 export class BankService {
@@ -18,7 +19,7 @@ export class BankService {
     @InjectRepository(BankTransactionEntity)
     private repository: Repository<BankTransactionEntity>,
     private readonly psp: GTBankService,
-    @InjectQueue('bank-payments-queue') private queue: Queue,
+    @InjectQueue('transactions-queue') private queue: Queue,
   ) {}
 
   findAll(): Promise<BankTransactionEntity[]> {
@@ -26,7 +27,8 @@ export class BankService {
   }
   async create(transaction: BankTransferDTO): Promise<BankTransactionEntity> {
     await this.queue.add('transfer', transaction);
-    return this.repository.save(transaction);
+    const savedEntity = await this.repository.save(transaction);
+    return savedEntity;
   }
 
   findOne(id: string): Promise<BankTransactionEntity> {
@@ -35,10 +37,8 @@ export class BankService {
 
   public async update(id: string, updateBankDto: UpdateBankTransferDto): Promise<any> {
     const item = await this.repository.findOneBy({ id });
-    // TODO: CREATE Entity
     this.logger.log(`update ${updateBankDto}`);
     const updateResult = await this.repository.update({ id }, item);
-    await this.queue.add('notify', updateResult);
   }
 
   private async balance(): Promise<number> {

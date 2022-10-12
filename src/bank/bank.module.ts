@@ -7,23 +7,12 @@ import { LoggerModule } from '../logger/logger.module';
 import { BullModule } from '@nestjs/bull';
 import { BankProcessor } from './consumers/bank.processor';
 import { GTBankService } from './providers/gtbank.service';
+import { QueueModule } from '../queue/queue.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([BankTransactionEntity]),
-    LoggerModule,
-    BullModule.forRoot({
-      redis: {
-        host: 'localhost',
-        port: 6379,
-      },
-    }),
-    BullModule.registerQueue({
-      name: 'bank-payments-queue',
-    }),
-  ],
+  imports: [TypeOrmModule.forFeature([BankTransactionEntity]), LoggerModule, QueueModule],
   controllers: [BankController],
   providers: [BankService, BankProcessor, GTBankService],
-  exports: [TypeOrmModule, BullModule, GTBankService],
+  exports: [TypeOrmModule, GTBankService],
 })
 export class BankModule {}
