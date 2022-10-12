@@ -1,102 +1,72 @@
-version: '3.9'
+version: "3.8"
 
 services:
-  # fiatapi:
-  #   # application rely on database running
-  #   depends_on:
-  #     - db
-  #   # this build context will take the commands from Dockerfile
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   # image name
-  #   image: fiat-api
-  #   # container name
-  #   container_name: fiatapi
-  #   # always restart the container if it stops.
-  #   restart: always
-  #   # docker run -t is allow
-  #   tty: true
-  #   # application port, this is take value from env file
-  #   ports:
-  #     - "${PORT}:${PORT}"
-  #   # working directory
-  #   working_dir: /var/www/paymnts
-  #   # application environment
-  #   environment:
-  #     SERVICE_NAME: fiatapi
-  #     SERVICE_TAGS: dev
-  #     VIRTUAL_HOST: ${VIRTUAL_HOST}
-  #     VIRTUAL_PORT: ${VIRTUAL_PORT}
-  #   # save (persist) data and also to share data between containers
-  #   volumes:
-  #     - ./:/var/www/paymnts
-  #     - /var/www/paymnts/node_modules
-  #   # application network, each container for a service joins this network
-  #   networks:
-  #     - app-network
-  database:
-    container_name: db
-    image: postgres:12
-    env_file: .env
-    volumes:
-      - db:/var/lib/postgresql/data
-    networks:
-      - app-network
-    expose:
-      - 5432
-    ports:
-      - 5434:5432
-    healthcheck:
-      test: pg_isready
-      interval: 10s
-      timeout: 5s
-      retries: 5
-  # Web server service
-  nginx-proxy:
-    # pull image from docker hub
-    image: nginx
-    # container name
-    container_name: nginx-proxy
-    # always restart, except that when the container is stopped
-    restart: unless-stopped
-    # docker run -t is allow
-    tty: true
-    # web server port default 81 and ssl run in port 443
-    ports:
-      - "81:81"
-      - "443:443"
-    # save (persist) data and also to share data between containers
-    volumes:
-      - ./:/var/www/paymnts
-      - ./nginx/conf.d/:/etc/nginx/conf.d
-    # web server rely on application running
-    # depends_on:
-    #   - fiatapi
-    # application network, each container for a service joins this network
-    networks:
-      - app-network
+    nginx:
+        build:
+            context: .
+            dockerfile: ./docker/nginx/Dockerfile
+        container_name: nginx
+        volumes:
+            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+        environment:
+            - NGINX_HOST=${NGINX_HOST}
+        ports:
+            - 80:80
+        restart: always
+        networks:
+            - frontend
+        depends_on:
+            - node
 
-    healthcheck:
-        test: curl --fail http://localhost || exit 1
-        interval: 60s
-        retries: 5
-        start_period: 20s
-        timeout: 10s
-  cache:
-    image: redis:alpine
-    container_name: cache
-    restart: always
-    ports:
-      - '9000:6379'
-    volumes:
-      - cache:/data
-networks:
-  app-network:
-    # nginx external network
-    external:
-      name: nginx-proxy
-    driver: bridge
+    node:
+        build:
+            context: .
+            dockerfile: ./docker/node/Dockerfile
+            target: development
+        container_name: node
+        ports:
+            - ${SERVER_PORT}:${SERVER_PORT}
+            - 9229:9229
+        env_file:
+            - .env
+        volumes:
+            - .:/usr/src/app
+            - /usr/src/app/node_modules
+        restart: always
+        networks:
+            - frontend
+            - backend
+        command: npm run start:dev
+        depends_on:
+            - redis
+            - postgres
+
+    redis:
+        container_name: redis
+        build: ./docker/redis
+        networks:
+            - backend
+
+    postgres:
+        container_name: postgres
+        build: ./docker/postgres
+        networks:
+            - backend
+        environment:
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_USER: ${DB_USERNAME}
+            POSTGRES_DB: ${DB_DATABASE_NAME}
+            PG_DATA: /var/lib/postgresql/data
+        ports:
+            - 5432:5432
+        volumes:
+            - pg-data:/var/lib/postgresql/data
+
 volumes:
-  db:
-  cache:
+    pg-data:
+
+networks:
+    frontend:
+        driver: bridge
+    backend:
+        driver: bridge

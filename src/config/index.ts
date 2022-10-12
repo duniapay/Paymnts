@@ -15,7 +15,7 @@ interface iConfig {
 }
 
 export default (): Partial<iConfig> => ({
-  port: parseInt(process.env.PORT, 10) || 3000,
+  port: parseInt(process.env.PORT, 10) || 8080,
   database: dbConfig(),
   keys: {
     privateKey: process.env.PRIVATE_KEY.replace(/\\n/gm, '\n'),
